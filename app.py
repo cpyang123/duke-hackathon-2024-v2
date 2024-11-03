@@ -34,7 +34,7 @@ if not os.path.exists(WORKING_DIR):
 # Compressing the content
 import pandas as pd
 df = pd.read_csv(WORKING_DIR + 'Affiliations_sheet.csv')
-df[:100].to_csv(WORKING_DIR + 'Affiliations_sheet_compressed.csv', index=False)
+df[:200].to_csv(WORKING_DIR + 'Affiliations_sheet_compressed.csv', index=False)
 file_path = WORKING_DIR + 'Affiliations_sheet_compressed.csv'
 text_content = textract.process(file_path)
 
@@ -177,7 +177,7 @@ if prompt := st.chat_input("How can I help with your research?"):
                                              {"name" : "Sun E. Sideup", "university": "University of Dinner", "department": "Department of Physics", "research_areas": "area", "profile_url": "https://scholars.duke.edu/person/adam.brekke"}]}
         """
         with st.spinner("Fetching Prof Profiles..."):
-            prof_dict_string = rag.query("If the below response includes professors, fetch the data for the professors and return a string in the format of: ```json " + sample_dict_string  + "``` use empty string if there fields missing. " + rag_response, param=QueryParam(mode="hybrid"))
+            prof_dict_string = rag.query("If the response below includes professors, fetch the data for the professors and return a string in the format of: ```json " + sample_dict_string  + "``` use empty string if there fields missing. " + rag_response, param=QueryParam(mode="hybrid"))
         # Process response to extract professor details (assuming JSON or structured format)
         try:
             response_data = json.loads(prof_dict_string[8:-3]) 

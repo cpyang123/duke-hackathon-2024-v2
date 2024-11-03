@@ -2,7 +2,7 @@
 import streamlit as st
 
 page1 = st.Page("app.py", title="Prof-Finder")
-page2 = st.Page("graph_page1.py", title="Duke ProfGraph")
+page2 = st.Page("graph_page.py", title="Duke ProfGraph")
 
 pg = st.navigation([page1, page2], position = "hidden")
 

@@ -21,6 +21,7 @@ G = nx.read_graphml(WORKING_DIR + "graph_chunk_entity_relation.graphml")
 # Convert NetworkX graph to Pyvis graph
 net = Network(notebook=True)
 net.from_nx(G)
+net.show_buttons(filter_=['physics'])
 
 # Save and display the interactive graph in Streamlit
 with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
@@ -28,7 +29,7 @@ with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
     net.save_graph(path)
 
     # Display the graph in an iframe
-    st.components.v1.html(open(path).read(), height=500)
+    st.components.v1.html(open(path).read(), height=1000)
         
         
         
