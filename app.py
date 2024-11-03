@@ -21,6 +21,8 @@ USER_AVATAR = "👤"
 BOT_AVATAR = "🤖"
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+st.logo("./static/duke_match2.png", size = "large")
+
 # Set up LightRAG
 WORKING_DIR = "./data/Affiliations/"
 if not os.path.exists(WORKING_DIR):
@@ -50,9 +52,11 @@ def save_chat_history(messages):
         db["messages"] = messages
 
 # Display a professor card
-def display_professor_card(name, university, research_areas, profile_image_url):
+def display_professor_card(name, university, research_areas, profile_url):
+    profile_image_url = False
     with st.container():
-        cols = st.columns([1, 3])
+        st.markdown("---")
+        cols = st.columns([1, 2])
         
         # Display profile image
         with cols[0]:
@@ -68,7 +72,7 @@ def display_professor_card(name, university, research_areas, profile_image_url):
             st.markdown(f"**{university}**")
             st.markdown(f"### Prof. {name}")
             st.markdown(f"**Researches:** {research_areas}")
-            st.button("View profile", key=name)
+            st.link_button("View profile", url=profile_url)
 
 # Initialize or load chat history
 if "messages" not in st.session_state:
@@ -121,23 +125,35 @@ if prompt := st.chat_input("How can I help with your research?"):
 
         # Call RAG to get response
         professor_data = []
-        for response in rag.query(prompt, param=QueryParam(mode="hybrid")):
+        
+        with st.spinner("Analyzing Professors..."):
+            rag_response = rag.query(prompt, param=QueryParam(mode="hybrid"))
+            
+        for response in rag_response:
             full_response += response or ""
             message_placeholder.markdown(full_response + "|")
             time.sleep(0.001)
 
-            # Process response to extract professor details (assuming JSON or structured format)
-            try:
-                response_data = eval(response)  # Only if response is in dictionary-like string format
-                for prof in response_data.get("professors", []):
-                    professor_data.append({
-                        "name": prof["name"],
-                        "university": prof["university"],
-                        "research_areas": prof["research_areas"],
-                        "profile_image_url": prof.get("profile_image_url")
-                    })
-            except Exception as e:
-                print("Error processing response:", e)
+        
+        sample_dict_string = """
+        {"professors" : [{"name" : "Chris P. Bacon", "university": "University of Breakfast", "research_areas": "area", "profile_url": "https://scholars.duke.edu/person/adam.brekke"}, 
+                                             {"name" : "Sun E. Sideup", "university": "University of Dinner", "research_areas": "area", "profile_url": "https://scholars.duke.edu/person/adam.brekke"}]}
+        """
+            
+        prof_dict_string = rag.query("If the below response includes professors, fetch the corresponding professors and return a string in the format of "+ sample_dict_string + rag_response, param=QueryParam(mode="hybrid"))
+        # Process response to extract professor details (assuming JSON or structured format)
+        try:
+            response_data = eval(prof_dict_string[8:-3])
+            for prof in response_data.get("professors", []):
+                professor_data.append({
+                    "name": prof["name"],
+                    "university": prof["university"],
+                    "research_areas": prof["research_areas"],
+                    "profile_url": prof.get("profile_url")
+                })
+        except Exception as e:
+            print("Error processing response:", e)
+            print(prof_dict_string)
         
         # Display professor cards based on the extracted data
         for prof in professor_data:
@@ -145,11 +161,12 @@ if prompt := st.chat_input("How can I help with your research?"):
                 name=prof["name"],
                 university=prof["university"],
                 research_areas=prof["research_areas"],
-                profile_image_url=prof["profile_image_url"]
+                profile_url=prof["profile_url"]
             )
+        
 
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# Save chat history after each interaction
-save_chat_history(st.session_state.messages)
+    # Save chat history after each interaction
+    save_chat_history(st.session_state.messages)
