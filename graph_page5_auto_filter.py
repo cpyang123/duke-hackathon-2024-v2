@@ -4,9 +4,9 @@ import streamlit.components.v1 as components
 import json
 
 # Neo4j connection credentials
-NEO4J_URI = "bolt://localhost:7687"
+NEO4J_URI = "neo4j+s://090406f4.databases.neo4j.io"
 NEO4J_USERNAME = "neo4j"
-NEO4J_PASSWORD = "your_password"
+NEO4J_PASSWORD = "USz2dTV07w3kfGyru-7ZBVU-xNYKah7RTaRP31DlETM"
 
 # Connect to Neo4j
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))

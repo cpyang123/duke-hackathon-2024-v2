@@ -17,7 +17,7 @@ def remove_quotes(string):
 
 st.title("The Duke ProfGraph")
 # Set up LightRAG
-WORKING_DIR = "./data/Affiliations/"
+WORKING_DIR = "./data/JSON/"
 
 st.logo("./static/duke_match2.png", size= 'large')
 

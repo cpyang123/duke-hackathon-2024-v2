@@ -27,22 +27,37 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 st.logo("./static/duke_match2.png", size = "large")
 
 # Set up LightRAG
-WORKING_DIR = "./data/Affiliations/"
+WORKING_DIR = "./data/JSON/"
 if not os.path.exists(WORKING_DIR):
     os.mkdir(WORKING_DIR)
 
 # Compressing the content
 import pandas as pd
-df = pd.read_csv(WORKING_DIR + 'Affiliations_sheet.csv')
-df[:200].to_csv(WORKING_DIR + 'Affiliations_sheet_compressed.csv', index=False)
-file_path = WORKING_DIR + 'Affiliations_sheet_compressed.csv'
-text_content = textract.process(file_path)
+# df = pd.read_csv(WORKING_DIR + 'Affiliations_sheet.csv')
+# df[:200].to_csv(WORKING_DIR + 'Affiliations_sheet_compressed.csv', index=False)
+# file_path = WORKING_DIR + 'Affiliations_sheet_compressed.csv'
+# text_content = textract.process(file_path)
+
 
 rag = LightRAG(
     working_dir=WORKING_DIR,
     llm_model_func=gpt_4o_mini_complete,
     llm_model_max_async=1
 )
+
+# Only need to run the following code once
+
+# with open('data/JSON/Data/unique_research_summaries_with_profiles.json') as f:
+#     data = json.load(f)
+
+# rag.insert([str(strdata) for strdata in data[:200]])
+
+# with open('data/JSON/Data/unique_publications.json') as f:
+#     data = json.load(f)
+
+# rag.insert([str(strdata) for strdata in data[:200]])
+
+
 
 def get_profile_picture(url):
     # Send a GET request to the URL
@@ -130,6 +145,8 @@ with st.sidebar:
                 os.remove(file_path)
             except Exception as e:
                 print(f"Error deleting {file_path}: {e}")
+                
+
         rag.insert(text_content.decode('utf-8'))
     # File uploader for resume/CV
     uploaded_file = st.file_uploader('Upload your resume/cv here:', type="pdf")
