@@ -54,8 +54,6 @@ def get_profile_picture(url):
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Find the image tag containing the profile picture
-        # This depends on the website's HTML structure. 
-        # You might need to adjust the selectors below.
         img_tag = soup.find('img', class_='img xs:max-w-[240px] md:max-w-full') 
 
         # Extract the image URL
@@ -111,8 +109,6 @@ def display_professor_card(name, university, department, research_areas, profile
 # Initialize or load chat history
 if "messages" not in st.session_state:
     st.session_state.messages = load_chat_history()
-
-
 
 # Sidebar with a button to delete chat history
 with st.sidebar:
@@ -177,7 +173,7 @@ if prompt := st.chat_input("How can I help with your research?"):
                                              {"name" : "Sun E. Sideup", "university": "University of Dinner", "department": "Department of Physics", "research_areas": "area", "profile_url": "https://scholars.duke.edu/person/adam.brekke"}]}
         """
         with st.spinner("Fetching Prof Profiles..."):
-            prof_dict_string = rag.query("If the response below includes professors, fetch the data for the professors and return a string in the format of: ```json " + sample_dict_string  + "``` use empty string if there fields missing. " + rag_response, param=QueryParam(mode="hybrid"))
+            prof_dict_string = rag.query("If the response below includes professors, fetch the data for the professors and return a string in the format of: ```json " + sample_dict_string  + "``` use empty string if there fields missing, avoid using comments " + rag_response, param=QueryParam(mode="hybrid"))
         # Process response to extract professor details (assuming JSON or structured format)
         try:
             response_data = json.loads(prof_dict_string[8:-3]) 
