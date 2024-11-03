@@ -1,9 +1,10 @@
+![Duke ProfMatch](https://github.com/cpyang123/duke-hackathon-2024-v2/blob/main/static/duke_match2.png)
+
 # Duke ProfMatch
 
 This is a project built for the 2024 Duke AI Hackathon.
 
 See modile version of the project here: https://github.com/rishabhshah13/prof_advisor_ui
-
 
 
 ## Overview
